@@ -17,6 +17,36 @@ import { Server } from 'socket.io'
 import conversationRouter from './routers/conversation.routers'
 import initSocket from './utils/socket'
 import { isProduction } from './constants/config'
+import swaggerJSDoc from 'swagger-jsdoc'
+import swaggerUi from 'swagger-ui-express'
+
+const options: swaggerJSDoc.Options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'X clone (Twitter API) ',
+      version: '1.0.0'
+    },
+    components: {
+      securitySchemes: {
+        BearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT'
+        }
+      }
+    },
+    security: [
+      {
+        BearerAuth: []
+      }
+    ],
+    persistAuthorization: true
+  },
+  apis: ['./openapi/*.yaml'] // files containing annotations as above
+}
+
+const openapiSpecification = swaggerJSDoc(options)
 
 config()
 const app = express()
@@ -35,6 +65,7 @@ databaseService.connect().then(() => {
 initFolder()
 
 app.use(express.json())
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification))
 app.use('/users', usersRouter)
 app.use('/medias', mediasRouter)
 app.use('/tweets', tweetRouter)

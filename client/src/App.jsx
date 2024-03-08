@@ -7,7 +7,7 @@ import axios from 'axios'
 function App() {
   useEffect(() => {
     const controller = new AbortController()
-    axios.get('/users/me', {
+    axios.get('/users/get-me', {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('access_token')}`
       },

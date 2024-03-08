@@ -12,4 +12,6 @@ export interface RegisterRequest {
 export interface TokenJwtPayload extends JwtPayload {
   user_id: string
   type: TokenType
+  exp: number
+  iat: number
 }

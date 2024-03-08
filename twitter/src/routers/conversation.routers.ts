@@ -7,7 +7,7 @@ import { wrap } from '~/utils/handlers'
 const conversationRouter = Router()
 
 conversationRouter.get(
-  '/recivers/:reciver_id',
+  '/receivers/:receiver_id',
   accessTokenValidation,
   paginationValidator,
   wrap(getConversationsController)

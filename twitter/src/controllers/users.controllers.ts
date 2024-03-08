@@ -139,7 +139,7 @@ export const getUsernameController = async (req: Request, res: Response) => {
   const user = await usersService.getUserProfile(username)
   return res.status(200).json({
     message: UsersMessages.SUCCESS,
-    user
+    result: user
   })
 }
 

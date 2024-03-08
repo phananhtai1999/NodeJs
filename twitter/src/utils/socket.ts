@@ -12,7 +12,7 @@ import databaseService from '~/services/database.services'
 const initSocket = (httpServer: ServerHttp) => {
   const io = new Server(httpServer, {
     cors: {
-      origin: 'https://localhost:3000'
+      origin: 'http://localhost:3000'
     }
   })
 
@@ -27,13 +27,14 @@ const initSocket = (httpServer: ServerHttp) => {
     const access_token = Authorization?.split(' ')[1]
     try {
       const decoded_authorization = await verifyAccessToken(access_token)
-      const { verify } = decoded_authorization as TokenJwtPayload
-      if (verify !== UserVerifyStatus.Verified) {
-        throw new ErrorWithStatus({
-          message: UsersMessages.USER_NOT_FOUND,
-          status: HttpStatus.FORBIDDEN
-        })
-      }
+      // console.log(decoded_authorization)
+      // const { verify } = decoded_authorization as TokenJwtPayload
+      // if (verify !== UserVerifyStatus.Verified) {
+      //   throw new ErrorWithStatus({
+      //     message: UsersMessages.USER_NOT_FOUND,
+      //     status: HttpStatus.FORBIDDEN
+      //   })
+      // }
 
       socket.handshake.auth.decoded_authorization = decoded_authorization
       socket.handshake.auth.access_token = access_token
@@ -79,9 +80,11 @@ const initSocket = (httpServer: ServerHttp) => {
 
       const result = await databaseService.conversations.insertOne(conversation)
       conversation._id = result.insertedId
-      socket.emit('send_message_success', {
+      const data_conversation = {
         payload: conversation
-      })
+      }
+
+      socket.emit('send_message_success', data_conversation)
 
       if (receiver_socket_id) {
         socket.to(receiver_socket_id).emit('receive_message', {
