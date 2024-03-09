@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import { ParamSchema, checkSchema } from 'express-validator'
 import { JsonWebTokenError } from 'jsonwebtoken'
 import { ObjectId } from 'mongodb'
+import { envConfig } from '~/constants/config'
 import HttpStatus from '~/constants/httpStatus'
 import { UsersMessages } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
@@ -20,7 +21,7 @@ const forgotPasswordTokenSchema: ParamSchema = {
       try {
         const decoded_forgot_password_token = await verifyToken({
           token: value,
-          secretOrPublicKey: process.env.JWT_SECRET_FORGOT_PASSWORD_TOKEN as string
+          secretOrPublicKey: envConfig.jwtSecretForgotPasswordToken
         })
 
         req.decoded_forgot_password_token = decoded_forgot_password_token
@@ -170,7 +171,7 @@ export const accessTokenValidation = validate(
             try {
               const decoded_authorization = await verifyToken({
                 token: access_token,
-                secretOrPublicKey: process.env.JWT_SECRET_ACCESS_TOKEN as string
+                secretOrPublicKey: envConfig.jwtSecretAccessToken
               })
               req.decoded_authorization = decoded_authorization
             } catch (error) {
@@ -200,7 +201,7 @@ export const refreshTokenValidation = validate(
           options: async (value: string, { req }) => {
             try {
               const [decoded_refresh_token, refresh_token] = await Promise.all([
-                verifyToken({ token: value, secretOrPublicKey: process.env.JWT_SECRET_REFRESH_TOKEN as string }),
+                verifyToken({ token: value, secretOrPublicKey: envConfig.jwtSecretRefreshToken }),
                 databaseService.refreshTokens.findOne({ token: value })
               ])
 
@@ -243,7 +244,7 @@ export const emailVerifyTokenValidation = validate(
             try {
               const decoded_email_verify_token = await verifyToken({
                 token: value,
-                secretOrPublicKey: process.env.JWT_SECRET_EMAIL_VERIFY_TOKEN as string
+                secretOrPublicKey: envConfig.jwtSecretEmailVerifyToken
               })
 
               req.decoded_email_verify_token = decoded_email_verify_token
@@ -311,7 +312,7 @@ export const resetPasswordValidation = validate(
             try {
               const decoded_forgot_password_token = await verifyToken({
                 token: value,
-                secretOrPublicKey: process.env.JWT_SECRET_FORGOT_PASSWORD_TOKEN as string
+                secretOrPublicKey: envConfig.jwtSecretForgotPasswordToken
               })
 
               req.decoded_forgot_password_token = decoded_forgot_password_token

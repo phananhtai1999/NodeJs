@@ -4,7 +4,7 @@ import sharp from 'sharp'
 import { DIR_UPLOAD_IMAGE, DIR_UPLOAD_VIDEO } from '~/utils/dir'
 import { getNameFromFullName, handleUploadImage, handleUploadVideo } from '~/utils/file'
 import fs from 'fs'
-import { isProduction } from '~/constants/config'
+import { envConfig, isProduction } from '~/constants/config'
 import { EncodingStatus, MediaType } from '~/constants/enums'
 import { Media } from '~/models/Other'
 import { encodeHLSWithMultipleVideoStreams } from '~/utils/video'
@@ -99,8 +99,8 @@ class MediaService {
         // fs.unlinkSync(file.filepath)
         return {
           url: isProduction
-            ? `${process.env.HOST}/static/image/${file.newFilename}`
-            : `http://localhost:${process.env.PORT}/static/image/${file.newFilename}`,
+            ? `${envConfig.host}/static/image/${file.newFilename}`
+            : `http://localhost:${envConfig.port}/static/image/${file.newFilename}`,
           type: MediaType.Image
         }
       })
@@ -115,8 +115,8 @@ class MediaService {
       files.map(async (file) => {
         return {
           url: isProduction
-            ? `${process.env.HOST}/static/video/${file.newFilename}`
-            : `http://localhost:${process.env.PORT}/static/video/${file.newFilename}`,
+            ? `${envConfig.host}/static/video/${file.newFilename}`
+            : `http://localhost:${envConfig.port}/static/video/${file.newFilename}`,
           type: MediaType.Video
         }
       })
@@ -133,8 +133,8 @@ class MediaService {
         queue.enqueue(file.filepath)
         return {
           url: isProduction
-            ? `${process.env.HOST}/static/video-hls/${new_name}.m3u8`
-            : `http://localhost:${process.env.PORT}/static/video-hls/${new_name}.m3u8`,
+            ? `${envConfig.host}/static/video-hls/${new_name}.m3u8`
+            : `http://localhost:${envConfig.port}/static/video-hls/${new_name}.m3u8`,
           type: MediaType.Hls
         }
       })

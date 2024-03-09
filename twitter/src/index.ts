@@ -4,8 +4,6 @@ import databaseService from './services/database.services'
 import { defaultErrorHandler } from './middlewares/error.middlewares'
 import mediasRouter from './routers/medias.routers'
 import { initFolder } from './utils/file'
-import { config } from 'dotenv'
-import { DIR_UPLOAD_IMAGE, DIR_UPLOAD_VIDEO } from './utils/dir'
 import staticRouter from './routers/static.router'
 import cors, { CorsOptions } from 'cors'
 import tweetRouter from './routers/tweet.routers'
@@ -13,16 +11,17 @@ import bookmarkRouter from './routers/bookmark.routers'
 import likeRouter from './routers/like.routers'
 import searchRouter from './routers/search.routers'
 import { createServer } from 'http'
-import { Server } from 'socket.io'
 import conversationRouter from './routers/conversation.routers'
 import initSocket from './utils/socket'
-import { isProduction } from './constants/config'
+import { envConfig, isProduction } from './constants/config'
 import swaggerJSDoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
+import helmet from 'helmet'
+import rateLimit from 'express-rate-limit'
 
 const options: swaggerJSDoc.Options = {
   definition: {
-    openapi: '3.0.0',
+    openapi: '3.1.0',
     info: {
       title: 'X clone (Twitter API) ',
       version: '1.0.0'
@@ -48,15 +47,26 @@ const options: swaggerJSDoc.Options = {
 
 const openapiSpecification = swaggerJSDoc(options)
 
-config()
 const app = express()
-const httpServer = createServer(app)
 
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false // Disable the `X-RateLimit-*` headers
+  // store: ... , // Use an external store for more precise rate limiting
+})
+app.use(limiter)
+
+const httpServer = createServer(app)
 const corsOptions: CorsOptions = {
-  origin: isProduction ? process.env.CLIENT_URL : '*'
+  origin: isProduction ? envConfig.clientUrl : '*'
 }
+
+app.use(helmet())
 app.use(cors(corsOptions))
-const port = process.env.PORT || 4000
+const port = envConfig.port || 4000
+
 databaseService.connect().then(() => {
   databaseService.indexUsers()
   databaseService.indexTweets()

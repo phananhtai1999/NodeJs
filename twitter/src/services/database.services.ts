@@ -9,16 +9,16 @@ import Hashtag from '~/models/schemas/hashtag.schema'
 import Bookmark from '~/models/schemas/bookmark.schema'
 import Like from '~/models/schemas/like.schema'
 import Conversation from '~/models/schemas/conversation.schema'
-dotenv.config()
+import { envConfig } from '~/constants/config'
 
-const uri = `mongodb://localhost:27017/${process.env.DB_NAME}`
+const uri = `mongodb://localhost:27017/${envConfig.dbName}`
 
 class DatabaseService {
   private client: MongoClient
   private db: Db
   constructor() {
     this.client = new MongoClient(uri)
-    this.db = this.client.db(process.env.DB_NAME)
+    this.db = this.client.db(envConfig.dbName)
   }
 
   async connect() {
