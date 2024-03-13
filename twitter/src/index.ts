@@ -68,10 +68,7 @@ app.use(helmet())
 app.use(cors(corsOptions))
 const port = envConfig.port || 4000
 
-databaseService.connect().then(() => {
-  databaseService.indexUsers()
-  databaseService.indexTweets()
-})
+databaseService.connect()
 
 initFolder()
 

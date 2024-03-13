@@ -11,12 +11,13 @@ import Like from '~/models/schemas/like.schema'
 import Conversation from '~/models/schemas/conversation.schema'
 import { envConfig } from '~/constants/config'
 
-const uri = `mongodb://localhost:27017/${envConfig.dbName}`
+const uri = `mongodb://${envConfig.dbHost}:27017/${envConfig.dbName}`
 
 class DatabaseService {
   private client: MongoClient
   private db: Db
   constructor() {
+    console.log('test', uri)
     this.client = new MongoClient(uri)
     this.db = this.client.db(envConfig.dbName)
   }

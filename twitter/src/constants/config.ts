@@ -28,6 +28,7 @@ export const envConfig = {
   port: (process.env.PORT as string) || 4000,
   host: process.env.HOST as string,
   dbName: process.env.DB_NAME as string,
+  dbHost: process.env.DB_HOST as string,
   passwordSecret: process.env.PASSWORD_SECRET as string,
   jwtSecretAccessToken: process.env.JWT_SECRET_ACCESS_TOKEN as string,
   jwtSecretRefreshToken: process.env.JWT_SECRET_REFRESH_TOKEN as string,

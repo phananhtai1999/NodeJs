@@ -1,6 +1,31 @@
+# version: '3'
+# services:
+#   twitter:
+#     image: tai/twitter:v0
+#     ports:
+#       - 4000:4000
+
 version: '3'
 services:
-  twitter:
-    image: tai/twitter:v2
+  # Service cho ứng dụng Node.js
+  nodejs_app:
+    build:
+      context: . # Đường dẫn đến thư mục chứa mã nguồn ứng dụng Node.js
+      dockerfile: Dockerfile # Tên tệp Dockerfile cho ứng dụng Node.js
     ports:
-      - 4000:4000
+      - '4000:4000' # Chuyển tiếp cổng 3000 của máy chủ ngoài vào cổng 3000 của container
+    depends_on:
+      - mongodb # Chờ cho container MongoDB khởi động trước khi khởi động container của Node.js
+    environment:
+      DB_HOST: mongodb
+
+  # Service cho cơ sở dữ liệu MongoDB
+  mongodb:
+    image: mongo:latest # Sử dụng image MongoDB từ Docker Hub
+    ports:
+      - '27017:27017' # Chuyển tiếp cổng 27017 của máy chủ ngoài vào cổng 27017 của container
+    volumes:
+      - mongodb_data:/data/db # Lưu dữ liệu của MongoDB trong một volume đặt tên "mongodb_data"
+
+volumes:
+  mongodb_data: # Định nghĩa volume "mongodb_data" để lưu trữ dữ liệu MongoDB
